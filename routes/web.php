@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+//对称加密
+$router->post('/test/opcode','TestController@decrypt');
+//非对称加密
+$router->post('/test/rsa','TestController@rsaDecrypt');
+//非对称加密签名
+$router->post('/test/firma','TestController@firma');
