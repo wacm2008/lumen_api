@@ -20,3 +20,11 @@ $router->post('/test/opcode','TestController@decrypt');
 $router->post('/test/rsa','TestController@rsaDecrypt');
 //非对称加密签名
 $router->post('/test/firma','TestController@firma');
+//注册练习
+$router->post('/test/register','TestController@register');
+//用户登录练习
+$router->post('/test/login','TestController@login');
+//跨域
+$router->post('/test/a','TestController@a');
+//redis测试
+$router->get('/test/aa','TestController@aa');
