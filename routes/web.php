@@ -28,3 +28,5 @@ $router->post('/test/login','TestController@login');
 $router->post('/test/a','TestController@a');
 //redis测试
 $router->get('/test/aa','TestController@aa');
+//app注册
+$router->get('/test/reg','TestController@reg');
