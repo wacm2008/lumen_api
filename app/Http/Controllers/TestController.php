@@ -114,6 +114,83 @@ class TestController extends Controller
     //app注册
     public function reg()
     {
-        echo 1;
+        header('Access-Control-Allow-Origin:*');
+        header('Access-Control-Allow-Methods:OPTIONS,GET,PSOT');
+        header('Access-Control-Allow-Headers:x-requested-with');
+        $name=$_POST['name'];
+        $pwd=$_POST['pwd'];
+        $pwd=password_hash($pwd,PASSWORD_DEFAULT);
+        $e=DB::table('p_user')->where(['name'=>$name])->first();
+        if($e){
+            $response=[
+                'errorno'=>50002,
+                'msg'=>'名字存在'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        $data=[
+            'name'=>$name,
+            'pwd'=>$pwd,
+        ];
+        $add=DB::table('p_user')->insert($data);
+        if($add){
+            $response=[
+                'errorno'=>0,
+                'msg'=>'注册成功'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }else{
+            $response=[
+                'errorno'=>1,
+                'msg'=>'注册失败'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+    }
+    //app登录
+    public function log()
+    {
+        header('Access-Control-Allow-Origin:*');
+        header('Access-Control-Allow-Methods:OPTIONS,GET,PSOT');
+        header('Access-Control-Allow-Headers:x-requested-with');
+        $name=$_POST['name'];
+        $pwd=$_POST['pwd'];
+        $e=DB::table('p_user')->where(['name'=>$name])->first();
+        if($e){
+            if(password_verify($pwd,$e->pwd)){
+                $token=substr(sha1($e->uid.time().str::random(10)),5,15);
+                $key='token_uid'.$_SERVER['REMOTE_ADDR'].$e->uid;
+                $re=Redis::get($key);
+                if($re){
+                    $response=[
+                        'errorno'=>0,
+                        'msg'=>'登录成功',
+                        'token'=>$token
+                    ];
+                    die(json_encode($response,JSON_UNESCAPED_UNICODE));
+                }else{
+                    Redis::set($key,$token);
+                    Redis::expire($key,604800);
+                    $response=[
+                        'errorno'=>0,
+                        'msg'=>'登录成功',
+                        'token'=>$token
+                    ];
+                    die(json_encode($response,JSON_UNESCAPED_UNICODE));
+                }
+            }else{
+                $response=[
+                    'errorno'=>"50003",
+                    'msg'=>'密码不正确'
+                ];
+                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+            }
+        }else{
+            $response=[
+                'errorno'=>"50004",
+                'msg'=>'用户名或密码不正确'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
     }
 }

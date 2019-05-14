@@ -30,3 +30,5 @@ $router->post('/test/a','TestController@a');
 $router->get('/test/aa','TestController@aa');
 //app注册
 $router->post('/test/reg','TestController@reg');
+//app登录
+$router->post('/test/log','TestController@log');
