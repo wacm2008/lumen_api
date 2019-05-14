@@ -50,6 +50,7 @@ class TestController extends Controller
     }
     //注册
     public function register(){
+        //header('Access-Control-Allow-Origin:*');
         //echo __METHOD__;
         $data=file_get_contents('php://input');
         $base64=base64_decode($data);
