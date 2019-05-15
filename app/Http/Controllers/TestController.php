@@ -190,33 +190,41 @@ class TestController extends Controller
         }
     }
     //个人中心
-    public function centro(){
-        $uid=$_GET['uid'];
-        $token=$_GET['token'];
-        $e=DB::table('p_user')->where(['uid'=>$uid])->first();
-        if(empty($uid)||empty($token)){
-            $response=[
-                'errorno'=>50001,
-                'msg'=>'参数不对',
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
-        }
-        $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$e->uid;
-        $local_token=Redis::get($key);
-        if($token){
-            if($token==$local_token){
-                $response=[
-                    'errorno'=>0,
-                    'msg'=>'欢迎登录',
-                ];
-                die(json_encode($response,JSON_UNESCAPED_UNICODE));
-            }else{
-                $response=[
-                    'errorno'=>50002,
-                    'msg'=>'请登录',
-                ];
-                die(json_encode($response,JSON_UNESCAPED_UNICODE));
-            }
-        }
+//    public function centro(){
+//        $uid=$_GET['uid'];
+//        $token=$_GET['token'];
+//        $e=DB::table('p_user')->where(['uid'=>$uid])->first();
+//        if(empty($uid)||empty($token)){
+//            $response=[
+//                'errorno'=>50001,
+//                'msg'=>'参数不对',
+//            ];
+//            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//        }
+//        $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$uid;
+//        $local_token=Redis::get($key);
+//        if($token){
+//            if($token==$local_token){
+//                $response=[
+//                    'errorno'=>0,
+//                    'msg'=>'欢迎登录',
+//                ];
+//                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//            }else{
+//                $response=[
+//                    'errorno'=>50002,
+//                    'msg'=>'请登录',
+//                ];
+//                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//            }
+//        }
+//    }
+    public function centro()
+    {
+        $response=[
+            'errorno'=>0,
+            'msg'=>'欢迎登录',
+        ];
+        die(json_encode($response,JSON_UNESCAPED_UNICODE));
     }
 }

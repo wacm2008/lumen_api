@@ -33,4 +33,7 @@ $router->post('/test/reg','TestController@reg');
 //app登录
 $router->post('/test/log','TestController@log');
 //app个人中心
-$router->get('/test/centro','TestController@centro');
+//$router->get('/test/centro','TestController@centro');
+$router->group(['middleware' => 'checkToken'], function () use ($router){
+    $router->get('/test/centro','TestController@centro');
+});
