@@ -221,10 +221,20 @@ class TestController extends Controller
 //    }
     public function centro()
     {
-        $response=[
-            'errorno'=>0,
-            'msg'=>'欢迎登录',
-        ];
-        die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        $uid=$_GET['uid'];
+        $e=DB::table('p_user')->where(['uid'=>$uid])->first();
+        if($e){
+            $response=[
+                'errorno'=>0,
+                'msg'=>'欢迎登录',
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }else{
+            $response=[
+                'errorno'=>50001,
+                'msg'=>'登录失败',
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
     }
 }
