@@ -114,9 +114,6 @@ class TestController extends Controller
     //app注册
     public function reg()
     {
-        header('Access-Control-Allow-Origin:*');
-        header('Access-Control-Allow-Methods:OPTIONS,GET,PSOT');
-        header('Access-Control-Allow-Headers:x-requested-with');
         $name=$_POST['name'];
         $pwd=$_POST['pwd'];
         $pwd=password_hash($pwd,PASSWORD_DEFAULT);
@@ -150,22 +147,20 @@ class TestController extends Controller
     //app登录
     public function log()
     {
-        header('Access-Control-Allow-Origin:*');
-        header('Access-Control-Allow-Methods:OPTIONS,GET,PSOT');
-        header('Access-Control-Allow-Headers:x-requested-with');
         $name=$_POST['name'];
         $pwd=$_POST['pwd'];
         $e=DB::table('p_user')->where(['name'=>$name])->first();
         if($e){
             if(password_verify($pwd,$e->pwd)){
                 $token=substr(sha1($e->uid.time().str::random(10)),5,15);
-                $key='token_uid'.$_SERVER['REMOTE_ADDR'].$e->uid;
+                $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$e->uid;
                 $re=Redis::get($key);
                 if($re){
                     $response=[
                         'errorno'=>0,
                         'msg'=>'登录成功',
-                        'token'=>$token
+                        'token'=>$token,
+                        'uid'=>$e->uid
                     ];
                     die(json_encode($response,JSON_UNESCAPED_UNICODE));
                 }else{
@@ -174,7 +169,8 @@ class TestController extends Controller
                     $response=[
                         'errorno'=>0,
                         'msg'=>'登录成功',
-                        'token'=>$token
+                        'token'=>$token,
+                        'uid'=>$e->uid
                     ];
                     die(json_encode($response,JSON_UNESCAPED_UNICODE));
                 }
@@ -191,6 +187,36 @@ class TestController extends Controller
                 'msg'=>'用户名或密码不正确'
             ];
             die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+    }
+    //个人中心
+    public function centro(){
+        $uid=$_GET['uid'];
+        $token=$_GET['token'];
+        $e=DB::table('p_user')->where(['uid'=>$uid])->first();
+        if(empty($uid)||empty($token)){
+            $response=[
+                'errorno'=>50001,
+                'msg'=>'参数不对',
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$e->uid;
+        $local_token=Redis::get($key);
+        if($token){
+            if($token==$local_token){
+                $response=[
+                    'errorno'=>0,
+                    'msg'=>'欢迎登录',
+                ];
+                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+            }else{
+                $response=[
+                    'errorno'=>50002,
+                    'msg'=>'请登录',
+                ];
+                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+            }
         }
     }
 }
