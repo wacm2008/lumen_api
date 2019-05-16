@@ -17,22 +17,22 @@ class CheckTokenMiddleware
     {
         $uid=$_GET['uid'];
         $token=$_GET['token'];
+        //echo $token.'<br>';
         if(empty($uid)||empty($token)){
             $response=[
-                'errorno'=>50001,
-                'msg'=>'参数不对',
+                'errorno'=>40001,
+                'msg'=>'参数不全',
             ];
             die(json_encode($response,JSON_UNESCAPED_UNICODE));
         }
-        $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$uid;
+        $key='token'.'-'.$uid;
         $local_token=Redis::get($key);
-        if($token){
-            if($token==$local_token){
-
-            }else{
+        //var_dump($local_token);die;
+        if($local_token){
+            if($token!=$local_token){
                 $response=[
-                    'errorno'=>50002,
-                    'msg'=>'请登录',
+                    'errorno'=>40002,
+                    'msg'=>'token无效 请登录',
                 ];
                 die(json_encode($response,JSON_UNESCAPED_UNICODE));
             }

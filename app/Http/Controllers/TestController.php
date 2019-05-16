@@ -114,79 +114,119 @@ class TestController extends Controller
     //app注册
     public function reg()
     {
+//        $name=$_POST['name'];
+//        $pwd=$_POST['pwd'];
+//        $pwd=password_hash($pwd,PASSWORD_DEFAULT);
+//        $e=DB::table('p_user')->where(['name'=>$name])->first();
+//        if($e){
+//            $response=[
+//                'errorno'=>50002,
+//                'msg'=>'名字存在'
+//            ];
+//            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//        }
+//        $data=[
+//            'name'=>$name,
+//            'pwd'=>$pwd,
+//        ];
+//        $add=DB::table('p_user')->insert($data);
+//        if($add){
+//            $response=[
+//                'errorno'=>0,
+//                'msg'=>'注册成功'
+//            ];
+//            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//        }else{
+//            $response=[
+//                'errorno'=>1,
+//                'msg'=>'注册失败'
+//            ];
+//            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//        }
+
         $name=$_POST['name'];
         $pwd=$_POST['pwd'];
-        $pwd=password_hash($pwd,PASSWORD_DEFAULT);
-        $e=DB::table('p_user')->where(['name'=>$name])->first();
-        if($e){
-            $response=[
-                'errorno'=>50002,
-                'msg'=>'名字存在'
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
-        }
         $data=[
             'name'=>$name,
             'pwd'=>$pwd,
         ];
-        $add=DB::table('p_user')->insert($data);
-        if($add){
-            $response=[
-                'errorno'=>0,
-                'msg'=>'注册成功'
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
-        }else{
-            $response=[
-                'errorno'=>1,
-                'msg'=>'注册失败'
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        $json=json_encode($data);
+        $url="http://pass.1809a.com/test/reg";
+        // 创建一个新cURL资源
+        $ch = curl_init();
+        //echo $ch;die;
+        // 设置URL和相应的选项
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//浏览器不输出
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$json);
+        curl_setopt($ch,CURLOPT_HTTPHEADER,['Content-Type:text/plain']);//发送raw数据
+        // 抓取URL并把它传递给浏览器
+        $cu=curl_exec($ch);
+        //var_dump($cu);
+        $errorcode=curl_errno($ch);
+        if($errorcode>0){
+            die('错误码：'.$errorcode);
         }
     }
     //app登录
     public function log()
     {
+//        $name=$_POST['name'];
+//        $pwd=$_POST['pwd'];
+//        $e=DB::table('p_user')->where(['name'=>$name])->first();
+//        if($e){
+//            if(password_verify($pwd,$e->pwd)){
+//                $token=substr(sha1($e->uid.time().str::random(10)),5,15);
+//                $key='token'.'-'.$e->uid;
+//                Redis::set($key,$token);
+//                Redis::expire($key,604800);
+//                Redis::get($key);
+//                $response=[
+//                      'errorno'=>0,
+//                      'msg'=>'登录成功',
+//                      'token'=>Redis::get($key),
+//                      'uid'=>$e->uid
+//                  ];
+//                  die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//            }else{
+//                $response=[
+//                    'errorno'=>"50003",
+//                    'msg'=>'密码不正确'
+//                ];
+//                die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//            }
+//        }else{
+//            $response=[
+//                'errorno'=>"50004",
+//                'msg'=>'用户名或密码不正确'
+//            ];
+//            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+//        }
+
         $name=$_POST['name'];
         $pwd=$_POST['pwd'];
-        $e=DB::table('p_user')->where(['name'=>$name])->first();
-        if($e){
-            if(password_verify($pwd,$e->pwd)){
-                $token=substr(sha1($e->uid.time().str::random(10)),5,15);
-                $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$e->uid;
-                $re=Redis::get($key);
-                if($re){
-                    $response=[
-                        'errorno'=>0,
-                        'msg'=>'登录成功',
-                        'token'=>$token,
-                        'uid'=>$e->uid
-                    ];
-                    die(json_encode($response,JSON_UNESCAPED_UNICODE));
-                }else{
-                    Redis::set($key,$token);
-                    Redis::expire($key,604800);
-                    $response=[
-                        'errorno'=>0,
-                        'msg'=>'登录成功',
-                        'token'=>$token,
-                        'uid'=>$e->uid
-                    ];
-                    die(json_encode($response,JSON_UNESCAPED_UNICODE));
-                }
-            }else{
-                $response=[
-                    'errorno'=>"50003",
-                    'msg'=>'密码不正确'
-                ];
-                die(json_encode($response,JSON_UNESCAPED_UNICODE));
-            }
-        }else{
-            $response=[
-                'errorno'=>"50004",
-                'msg'=>'用户名或密码不正确'
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        $data=[
+            'name'=>$name,
+            'pwd'=>$pwd
+        ];
+        $json=json_encode($data);
+        $url="http://pass.1809a.com/test/log";
+        // 创建一个新cURL资源
+        $ch = curl_init();
+        //echo $ch;die;
+        // 设置URL和相应的选项
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//浏览器不输出
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$json);
+        curl_setopt($ch,CURLOPT_HTTPHEADER,['Content-Type:text/plain']);//发送raw数据
+        // 抓取URL并把它传递给浏览器
+        $cu=curl_exec($ch);
+        //var_dump($cu);
+        $errorcode=curl_errno($ch);
+        if($errorcode>0){
+            die('错误码：'.$errorcode);
         }
     }
     //个人中心
@@ -201,7 +241,7 @@ class TestController extends Controller
 //            ];
 //            die(json_encode($response,JSON_UNESCAPED_UNICODE));
 //        }
-//        $key='token_uid'.'-'.$_SERVER['REMOTE_ADDR'].'-'.$uid;
+//        $key='token'.'-'.$uid;
 //        $local_token=Redis::get($key);
 //        if($token){
 //            if($token==$local_token){
@@ -221,20 +261,10 @@ class TestController extends Controller
 //    }
     public function centro()
     {
-        $uid=$_GET['uid'];
-        $e=DB::table('p_user')->where(['uid'=>$uid])->first();
-        if($e){
-            $response=[
-                'errorno'=>0,
-                'msg'=>'欢迎登录',
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
-        }else{
-            $response=[
-                'errorno'=>50001,
-                'msg'=>'登录失败',
-            ];
-            die(json_encode($response,JSON_UNESCAPED_UNICODE));
-        }
+        $response=[
+            'errorno'=>0,
+            'msg'=>'欢迎登录',
+        ];
+        die(json_encode($response,JSON_UNESCAPED_UNICODE));
     }
 }
